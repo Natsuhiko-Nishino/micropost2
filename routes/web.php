@@ -22,3 +22,12 @@ Route::get('/', function () {return view('welcome');});
 
 Route::group(['middleware' => ['auth']], function () {
 Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);});
+
+Route::get('/', 'MicropostsController@index');
+
+// omit
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('users', 'UsersController', ['only' => ['index', 'show']]);
+    Route::resource('microposts', 'MicropostsController', ['only' => ['store', 'destroy']]);
+});
