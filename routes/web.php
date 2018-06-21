@@ -21,6 +21,7 @@ Route::post('signup', 'Auth\RegisterController@register')->name('signup.post');
 
 Route::get('/', function () {return view('welcome');});
 Route::get('/', 'MicropostsController@index');
+Route::resource('microposts', 'MicropostsController');
 
 
 Route::group(['middleware' => 'auth'], function () {
