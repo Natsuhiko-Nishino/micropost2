@@ -18,11 +18,7 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
+   
     protected $hidden = [
         'password', 'remember_token',
     ];
@@ -79,6 +75,8 @@ class User extends Authenticatable
 
     public function is_following($userId) {
     return $this->followings()->where('follow_id', $userId)->exists();
+    
+    
 }
 
     public function feed_microposts()
@@ -87,5 +85,49 @@ class User extends Authenticatable
         $follow_user_ids[] = $this->id;
         return Micropost::whereIn('user_id', $follow_user_ids);
     }
+public function favoritepost()
+    {
+        return $this->belongsToMany(Micropost::class, 'favorite', 'user_id', 'microposts_id')->withTimestamps();
+    }
 
+public function pushfavorite($micropostId)
+{
+    // confirm if already pushed favorite
+    $done = $this->is_pushing($micropostId);
+   
+
+    if ($done) {
+        // do nothing if already pushed favorite
+        return false;
+    } else {
+        // push fav if not pushed fav
+        $this->favoritepost()->attach($micropostId);
+        return true;
+    }
 }
+
+public function drawfavorite($micropostId)
+{
+    $done = $this->is_pushing($micropostId);
+    if ($done) {
+        // stop faving if faving
+        $this->favoritepost()->detach($micropostId);
+        return true;
+    } else {
+        // do nothing if not faving
+        return false;
+    }
+}
+
+public function is_pushing($micropostId) {
+    return $this->favoritepost()->where('microposts_id', $micropostId)->exists();
+}
+
+ public function feed_favoriteposts()
+    {
+        $favorite_micropost_ids = $this->favoritepost()-> pluck('microposts.id')->toArray();
+        return Micropost::whereIn('user_id', $favorite_micropost_ids);
+    }
+}
+
+

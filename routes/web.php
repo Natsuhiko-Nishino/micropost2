@@ -1,6 +1,6 @@
 <?php
 
-/*
+/*postgres://kslbwmltwtecdh:2e3bcb2ead3e011b1ce8abef35c344bbd9f32f0ba8394ecaafc637e8e651c824@ec2-54-235-75-214.compute-1.amazonaws.com:5432/dbhq70epkn68cm
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -33,6 +33,12 @@ Route::delete('unfollow', 'UserFollowController@destroy')->name('user.unfollow')
 Route::get('followings', 'UsersController@followings')->name('users.followings');
 Route::get('followers', 'UsersController@followers')->name('users.followers');
     });
+    
+Route::group(['prefix' => 'users/{id}'], function () {
+Route::post('pushfavorite', 'FavoriteController@store')->name('micropost.pushfavorite');
+Route::delete('drawfavorite', 'FavoriteController@destroy')->name('micropost.drawfavorite');
+Route::get('favoritepost', 'UsersController@favoritepost')->name('micropost.favoritepost');
+});
 
 Route::resource('microposts', 'MicropostsController', ['only' => ['store', 'destroy']]);
 
